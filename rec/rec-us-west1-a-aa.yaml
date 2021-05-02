@@ -1,0 +1,18 @@
+apiVersion: app.redislabs.com/v1alpha1
+kind: RedisEnterpriseCluster
+metadata:
+  name: rec-us-west1-a
+spec:
+  activeActive:
+    apiIngressUrl: api-raas-us-west1-a.rec-us-west1-a.35.185.198.166.nip.io
+    dbIngressSuffix: -raas-us-west1-a.rec-us-west1-a.35.185.198.166.nip.io
+    method: ingress
+    ingressAnnotations:
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+      kubernetes.io/ingress.class: "nginx"
+  # Add fields here
+  nodes: 3
+  persistentSpec:
+    enabled: true
+    storageClassName: "standard"
+    volumeSize: 20Gi

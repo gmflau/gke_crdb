@@ -26,11 +26,11 @@ REC at rec-us-west1-a:
 ```
   activeActive:
     apiIngressUrl: api-raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.nip.io
-    dbIngressSuffix: -raas-us-west1-a.raas-us-west1-a.<EXTERNAL-IP>.nip.io
+    dbIngressSuffix: -raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.nip.io
     method: ingress
-  ingressAnnotations:
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    kubernetes.io/ingress.class: "nginx"
+    ingressAnnotations:
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+      kubernetes.io/ingress.class: "nginx"
 ```
 You can validate that these were applied by describing the rec as follows:
 ```
@@ -40,6 +40,17 @@ Check if ingress is created:
 ```
 kubectl get ingress -n raas-us-west1-a
 ```
+Grab creds for rec:
+```
+kubectl get secrets -n raas-us-west1-a rec-us-west1-a  -o json | jq '.data | {username}[] | @base64d'
+kubectl get secrets -n raas-us-west1-a rec-us-west1-a  -o json | jq '.data | {password}[] | @base64d'
+```
+Query the cluster thru the API endpoint:
+```
+curl -k -u <username>:<password> https://api-raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.nip.io/v1/cluster
+Ex: curl -k -u demo@redislabs.com:rglodSKY https://api-raas-us-west1-a.rec-us-west1-a.35.185.198.166.nip.io/v1/cluster
+```
+
 
 
 Deploy REC in "raas-us-east1-b" namespace of the GKE cluster in us-east1-b region:
@@ -55,17 +66,42 @@ Retrieve EXTERNAL-IP of the ingress-controller:
 ```
 kubectl get service/ingress-nginx-controller  -n ingress-nginx
 ```
-Apply the activeActive spec to rec-us-west1-a (Redis Enterprise Cluster):
+Apply the activeActive spec to rec-us-east1-b (Redis Enterprise Cluster):
 REC at rec-us-east1-b:
 ```
   activeActive:
     apiIngressUrl: api-raas-us-east1-b.rec-us-east1-b.<EXTERNAL-IP>.nip.io
-    dbIngressSuffix: -raas-us-east1-b.raas-us-east1-b.<EXTERNAL-IP>.nip.io
+    dbIngressSuffix: -raas-us-east1-b.rec-us-east1-b.<EXTERNAL-IP>.nip.io
     method: ingress
-  ingressAnnotations:
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    kubernetes.io/ingress.class: "nginx"
+    ingressAnnotations:
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+      kubernetes.io/ingress.class: "nginx"
 ```
+You can validate that these were applied by describing the rec as follows:
+```
+kubectl get rec -n raas-us-east1-b -o json | jq '.items[].spec.activeActive'
+```
+Check if ingress is created:
+```
+kubectl get ingress -n raas-us-east1-b
+```
+Grab creds for rec:
+```
+kubectl get secrets -n raas-us-east1-b rec-us-east1-b  -o json | jq '.data | {username}[] | @base64d'
+kubectl get secrets -n raas-us-east1-b rec-us-east1-b  -o json | jq '.data | {password}[] | @base64d'
+```
+Query the cluster thru the API endpoint:
+```
+curl -k -u <username>:<password> https://api-raas-us-east1-b.rec-us-east1-b.<EXTERNAL-IP>.nip.io/v1/cluster
+Ex: curl -k -u demo@redislabs.com:rglodSKY https://api-raas-us-east1-b.rec-us-east1-b.35.185.198.166.nip.io/v1/cluster
+```
+
+
+
+
+
+
+
 
 
 

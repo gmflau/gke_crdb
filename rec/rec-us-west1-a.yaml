@@ -1,0 +1,11 @@
+apiVersion: app.redislabs.com/v1alpha1
+kind: RedisEnterpriseCluster
+metadata:
+  name: rec-us-west1-a
+spec:
+  # Add fields here
+  nodes: 3
+  persistentSpec:
+    enabled: true
+    storageClassName: "standard"
+    volumeSize: 20Gi

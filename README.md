@@ -8,25 +8,63 @@ Build two GKE clusters:
 ```
 
 
-Deploy REC on the GKE cluster in us-west1-a region in "raas-us-west1-a" namespace:
+Deploy REC in "raas-us-west1-a" namespace of the GKE cluster in us-west1-a region:
 ```
 ./bundle.sh raas-us-west1-a
 kubectl apply -f rec/rec-us-west1-a.yaml
 ```
-Install Ingress Controller (Nginx) on GKE cluster in us-west1-a region in "ingress-nginx" namespace:
+Install Ingress Controller (Nginx) in "ingress-nginx" namespace of the GKE cluster in us-west1-a region:
 ```
 kubectl apply -f ingress/nginx-ingress-controller.yaml
 ```
+Retrieve EXTERNAL-IP of the ingress-controller:
+```
+kubectl get service/ingress-nginx-controller  -n ingress-nginx
+```
+Apply the activeActive spec to rec-us-west1-a (Redis Enterprise Cluster):
+REC at rec-us-west1-a:
+```
+  activeActive:
+    apiIngressUrl: api-raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.nip.io
+    dbIngressSuffix: -raas-us-west1-a.raas-us-west1-a.<EXTERNAL-IP>.nip.io
+    method: ingress
+  ingressAnnotations:
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    kubernetes.io/ingress.class: "nginx"
+```
+You can validate that these were applied by describing the rec as follows:
+```
+kubectl get rec -n raas-us-west1-a -o json | jq '.items[].spec.activeActive'
+```
+Check if ingress is created:
+```
+kubectl get ingress -n raas-us-west1-a
+```
 
 
-Deploy REC on the GKE cluster in us-east1-b region in "raas-us-east1-b" namespace:
+Deploy REC in "raas-us-east1-b" namespace of the GKE cluster in us-east1-b region:
 ```
 ./bundle.sh raas-us-east1-b
 kubectl apply -f rec/rec-us-east1-b.yaml
 ```
-Install Ingress Controller (Nginx) on GKE cluster in us-west1-a region in "ingress-nginx" namespace:
+Install Ingress Controller (Nginx) in "ingress-nginx" namespace of the GKE cluster in us-east1-b region:
 ```
 kubectl apply -f ingress/nginx-ingress-controller.yaml
+```
+Retrieve EXTERNAL-IP of the ingress-controller:
+```
+kubectl get service/ingress-nginx-controller  -n ingress-nginx
+```
+Apply the activeActive spec to rec-us-west1-a (Redis Enterprise Cluster):
+REC at rec-us-east1-b:
+```
+  activeActive:
+    apiIngressUrl: api-raas-us-east1-b.rec-us-east1-b.<EXTERNAL-IP>.nip.io
+    dbIngressSuffix: -raas-us-east1-b.raas-us-east1-b.<EXTERNAL-IP>.nip.io
+    method: ingress
+  ingressAnnotations:
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    kubernetes.io/ingress.class: "nginx"
 ```
 
 
@@ -35,7 +73,7 @@ kubectl apply -f ingress/nginx-ingress-controller.yaml
 
 ## Pre-requisites 
 
-* Two working Redis Enteprise Clusters (REC) in different Openshift environments
+* Two working Redis Enteprise Clters (REC) in different Openshift environments
   * Important Note: the two RECs should have *different* `names`/`fqdn`. If this is not met, the CRDB creation will result in bad state.
 * REC _admin role_ credentials to both RECs
 * Appropriate resources available in each REC to create DBs of the requested size.

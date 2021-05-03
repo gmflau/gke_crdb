@@ -144,7 +144,7 @@ kubectl get secrets -n raas-us-west1-a rec-us-west1-a  -o json | jq '.data | {us
 Query the cluster through the API endpoint:
 ```
 curl -k -u <username>:<password> https://api-raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.nip.io/v1/cluster
-Ex. curl -k -u demo@redislabs.com:rglodSKY https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/cluster
+Ex. curl -k -u demo@redislabs.com:NeEkHiq1 https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/cluster
 ```
 At this point, the Redis Enterprise Cluster named rec-us-west1-a is set up for Active-Active Geo Replication.
 
@@ -216,7 +216,7 @@ The following parameters will be required to form the JSON payload to create the
 
 
 
-Here is an example when creating a CRDB with database name <i>test-db</i>:
+Here is an example when creating a CRDB with database name <i>glau-crdb</i>:
 | Parameter Name in REST API | Example value |
 | -------------------------- | ------------- |
 | `name` | rec-us-west1-a.raas-us-west1-a.svc.cluster.local |
@@ -271,6 +271,43 @@ Create the JSON payload for CRDB creation request as in this <a href="./crdb.jso
 ```
 
 #### 5. POST the JSON payload to one of the REC's API endpoints
+In this step you will make the Active-Active DB request to just one cluster member. *Why just one?* This request is coordinated among members: You request one member to initiate the coordination *by including* the list of, and credentials for, each Active-Active DB member.
+
+Apply the following to the API endpoint at *just one* cluster API endpoint:
+
+`curl -k -u demo@redislabs.com:NeEkHiq1 https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/crdbs -X POST -H 'Content-Type: application/json' -d @crdb.json`
+
+*Note:* `curl` some users are having difficulty specifying the payload with the `-d` argument. Please consult your curl manual or try postman.
+
+You should see a reply from the API as in the following which indicates the payload was well formed and the request is being actioned:
+```
+{
+  "id": "9644de6c-1bef-4ebe-b010-3a4e6199138b",
+  "status": "queued"
+}
+```
+*Note* Did you get something other than `queued` as a response? Then proceed to the [troubleshooting](#troubleshooting) section of the document.
+
+<a href="crdb_tasks"></a>
+You can get the status of the above task by issuing a GET on `/v1/crdbs_tasks/<id>`. Here is an example of a failed task:
+```
+$ curl -k -u demo@redislabs.com:NeEkHiq1 https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/crdb_tasks/9644de6c-1bef-4ebe-b010-3a4e6199138b
+{
+  "crdb_guid": "805be1c6-0b27-47b1-8461-00b8465981c9",
+  "id": "9644de6c-1bef-4ebe-b010-3a4e6199138b",
+  "status": "finished"
+}
+```
+
+Verify if the CRDB is created:
+```
+kubectl exec -it rec-us-west1-a-0 -n raas-us-west1-a -c redis-enterprise-node -- /bin/bash
+Once you are inside the container:
+rladmin status
+```
+You should see the database metadata like the following:
+[rladmin status](./img/rladmin_status.png)
+
 
 
 #### 6. Run a workload

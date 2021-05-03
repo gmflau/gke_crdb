@@ -9,26 +9,26 @@
   "instances": [
     {
       "cluster": {
-        "url": "https://api-raas-site-a.rec-a.35.247.99.119.nip.io",
+        "url": "https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io",
         "credentials": {
           "username": "demo@redislabs.com",
-          "password": "Wp3YrQSE"
+          "password": "NeEkHiq1"
         },
-        "name": "rec-a.raas-site-a.svc.cluster.local",
-        "replication_endpoint": "glau-crdb-raas-site-a.rec-a.35.247.99.119.nip.io:443",
-        "replication_tls_sni": "glau-crdb-raas-site-a.rec-a.35.247.99.119.nip.io"
+        "name": "rec-us-west1-a.raas-us-west1-a.svc.cluster.local",
+        "replication_endpoint": "glau-crdb-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io:443",
+        "replication_tls_sni": "glau-crdb-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io"
       }
     },
     {
       "cluster": {
-        "url": "https://api-raas-site-b.rec-b.35.247.99.119.nip.io",
+        "url": "https://api-raas-us-east1-b.rec-us-east1-b.34.75.99.216.nip.io",
         "credentials": {
           "username": "demo@redislabs.com",
-          "password": "VniYXxS7"
+          "password": "wC0EU6B0"
         },
-        "name": "rec-b.raas-site-b.svc.cluster.local",
-        "replication_endpoint": "glau-crdb-raas-site-b.rec-b.35.247.99.119.nip.io:443",
-        "replication_tls_sni": "glau-crdb-raas-site-b.rec-b.35.247.99.119.nip.io"
+        "name": "rec-us-east1-b.raas-us-east1-b.svc.cluster.local",
+        "replication_endpoint": "glau-crdb-raas-us-west1-a.rec-us-west1-a.34.75.99.216.nip.io:443",
+        "replication_tls_sni": "glau-crdb-raas-us-west1-a.rec-us-west1-a.34.75.99.216.nip.io"
       }
     }
   ],

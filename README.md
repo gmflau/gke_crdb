@@ -115,10 +115,28 @@ You can validate that these were applied by describing the rec as follows:
 ```
 kubectl get rec -n raas-us-west1-a -o json | jq '.items[].spec.activeActive'
 ```
+The output should look like the following:
+```
+{
+  "apiIngressUrl": "api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io",
+  "dbIngressSuffix": "-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io",
+  "ingressAnnotations": {
+    "kubernetes.io/ingress.class": "nginx",
+    "nginx.ingress.kubernetes.io/ssl-passthrough": "true"
+  },
+  "method": "ingress"
+}
+```
 Check if ingress is created:
 ```
 kubectl get ingress -n raas-us-west1-a
 ```
+The output should look like this:
+```
+NAME             CLASS    HOSTS                                                   ADDRESS       PORTS   AGE
+rec-us-west1-a   <none>   api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io   34.105.40.1   80      2m
+```
+This indicates that a route has been created to access the API endpoint externally.
 Grab creds for rec:
 ```
 kubectl get secrets -n raas-us-west1-a rec-us-west1-a  -o json | jq '.data | {username}[] | @base64d'
@@ -127,7 +145,7 @@ kubectl get secrets -n raas-us-west1-a rec-us-west1-a  -o json | jq '.data | {pa
 Query the cluster thru the API endpoint:
 ```
 curl -k -u <username>:<password> https://api-raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.nip.io/v1/cluster
-Ex. curl -k -u demo@redislabs.com:rglodSKY https://api-raas-us-west1-a.rec-us-west1-a.35.185.198.166.nip.io/v1/cluster
+Ex. curl -k -u demo@redislabs.com:rglodSKY https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/cluster
 ```
 At this point, the Redis Enterprise Cluster named rec-us-west1-a is set up for Active-Active Geo Replication.
 
@@ -159,6 +177,18 @@ REC at rec-us-east1-b:
 You can validate that these were applied by describing the rec as follows:
 ```
 kubectl get rec -n raas-us-east1-b -o json | jq '.items[].spec.activeActive'
+```
+The output should look like the following:
+```
+{
+  "apiIngressUrl": "api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io",
+  "dbIngressSuffix": "-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io",
+  "ingressAnnotations": {
+    "kubernetes.io/ingress.class": "nginx",
+    "nginx.ingress.kubernetes.io/ssl-passthrough": "true"
+  },
+  "method": "ingress"
+}
 ```
 Check if ingress is created:
 ```

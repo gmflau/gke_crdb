@@ -317,6 +317,26 @@ rladmin status
 ![rladmin status 2](./img/rladmin_status_02.png)
 
 
+Try to connect to the database from one of the Redis Enterprise Cluster node:
+Grab the database endpoint:
+```
+curl -k -u demo@redislabs.com:NeEkHiq1 https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/bdbs | jq '.[0].endpoints[0].dns_name'
+```
+Grab the database port:
+```
+curl -k -u demo@redislabs.com:NeEkHiq1 https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/bdbs | jq '.[0].endpoints[0].port'
+```
+Connect to the database:
+```
+kubectl exec -it rec-us-west1-a-0 -n raas-us-west1-a -c redis-enterprise-node -- /bin/bash
+redis-cli -h <database endpoint> -p <database port>
+
+```
+
+
+
+
+
 
 #### 6. Run a workload
 
@@ -369,6 +389,7 @@ deployment.apps/redis-benchmark-tls         1/1     1            1           88m
 
 Alas, this is not a `memtier_benchmark` tutorial. Feel free to try out some of the other command line options. 
 
+
 ## Troubleshooting Steps
 
 1. Symptom: API endpoint not reachable
@@ -402,10 +423,5 @@ The API endpoint is not reachable from one cluster to the other.
     * Your payload is not being passed to the API or the payload is not valid JSON. Please Lint your JSON or try Postman with built-in JSON validate.
 
 1. The Active-Active DB request was accepted and completed, but replication is not taking place. This is likely the case if either or both DB ingress routes are not working properly. Please contact your K8s/OpenShift administrator to validate these routes.
-
-## What's next?
-
-1.  Generate some workload against the Active-active DB as in <a href="benchmark.yml" target="_blank">this manifest</a> using `memtier_benchmark`. 
-
 
 

@@ -31,13 +31,61 @@ deployment.apps/redis-enterprise-operator   0/1     1            0           3s
 NAME                                                   DESIRED   CURRENT   READY   AGE
 replicaset.apps/redis-enterprise-operator-7f58bd467c   1         1         0       3s
 ```
+Now create a Redis Enterprise Cluster named rec-us-west-1-a:
 ```
 kubectl apply -f rec/rec-us-west1-a.yaml
+```
+Now you should see the following after you run "kubectl get all".  It will take a few minutes to complete creation of the cluster:
+```
+NAME                                                  READY   STATUS    RESTARTS   AGE
+pod/rec-us-west1-a-0                                  2/2     Running   0          8m13s
+pod/rec-us-west1-a-1                                  2/2     Running   0          6m17s
+pod/rec-us-west1-a-2                                  2/2     Running   0          4m6s
+pod/rec-us-west1-a-services-rigger-5cc8877ff5-2qkr7   1/1     Running   0          8m14s
+pod/redis-enterprise-operator-7f58bd467c-5jdqk        1/1     Running   0          13m
+
+NAME                        TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+service/rec-us-west1-a      ClusterIP   None           <none>        9443/TCP,8001/TCP,8070/TCP   8m15s
+service/rec-us-west1-a-ui   ClusterIP   10.40.25.222   <none>        8443/TCP                     8m15s
+
+NAME                                             READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/rec-us-west1-a-services-rigger   1/1     1            1           8m16s
+deployment.apps/redis-enterprise-operator        1/1     1            1           13m
+
+NAME                                                        DESIRED   CURRENT   READY   AGE
+replicaset.apps/rec-us-west1-a-services-rigger-5cc8877ff5   1         1         1       8m16s
+replicaset.apps/redis-enterprise-operator-7f58bd467c        1         1         1       13m
+
+NAME                              READY   AGE
+statefulset.apps/rec-us-west1-a   3/3     8m15s
 ```
 Install Ingress Controller (Nginx) in "ingress-nginx" namespace of the GKE cluster in us-west1-a region:
 ```
 kubectl apply -f ingress/nginx-ingress-controller.yaml
 ```
+
+You should see the following after you run "kubectl get all -n ingress-nginx". It will take a few minutes to complete the deployment.
+```
+NAME                                            READY   STATUS      RESTARTS   AGE
+pod/ingress-nginx-admission-create-wbpb9        0/1     Completed   0          47m
+pod/ingress-nginx-admission-patch-ltrfg         0/1     Completed   1          47m
+pod/ingress-nginx-controller-6d95d4fc94-bswr7   1/1     Running     0          47m
+
+NAME                                         TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+service/ingress-nginx-controller             LoadBalancer   10.40.25.163   34.105.40.1   80:31456/TCP,443:32004/TCP   48m
+service/ingress-nginx-controller-admission   ClusterIP      10.40.23.4     <none>        443/TCP                      48m
+
+NAME                                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/ingress-nginx-controller   1/1     1            1           48m
+
+NAME                                                  DESIRED   CURRENT   READY   AGE
+replicaset.apps/ingress-nginx-controller-6d95d4fc94   1         1         1       48m
+
+NAME                                       COMPLETIONS   DURATION   AGE
+job.batch/ingress-nginx-admission-create   1/1           3s         48m
+job.batch/ingress-nginx-admission-patch    1/1           4s         48m
+```
+
 Retrieve EXTERNAL-IP of the ingress-controller:
 ```
 kubectl get service/ingress-nginx-controller  -n ingress-nginx
@@ -48,6 +96,16 @@ REC at rec-us-west1-a:
   activeActive:
     apiIngressUrl: api-raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.nip.io
     dbIngressSuffix: -raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.nip.io
+    method: ingress
+    ingressAnnotations:
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+      kubernetes.io/ingress.class: "nginx"
+```
+In our example, the spec looks like this:
+```
+  activeActive:
+    apiIngressUrl: api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io
+    dbIngressSuffix: -raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io
     method: ingress
     ingressAnnotations:
       nginx.ingress.kubernetes.io/ssl-passthrough: "true"
@@ -71,10 +129,10 @@ Query the cluster thru the API endpoint:
 curl -k -u <username>:<password> https://api-raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.nip.io/v1/cluster
 Ex. curl -k -u demo@redislabs.com:rglodSKY https://api-raas-us-west1-a.rec-us-west1-a.35.185.198.166.nip.io/v1/cluster
 ```
+At this point, the Redis Enterprise Cluster named rec-us-west1-a is set up for Active-Active Geo Replication.
 
 
-
-Deploy REC in "raas-us-east1-b" namespace of the GKE cluster in us-east1-b region:
+Now, deploy REC in "raas-us-east1-b" namespace of the GKE cluster in us-east1-b region:
 ```
 ./bundle.sh raas-us-east1-b
 kubectl apply -f rec/rec-us-east1-b.yaml

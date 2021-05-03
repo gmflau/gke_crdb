@@ -19,6 +19,19 @@ The following is the high level workflow which you will follow:
 Deploy REC in "raas-us-west1-a" namespace of the GKE cluster in us-west1-a region:
 ```
 ./bundle.sh raas-us-west1-a
+```
+You should see the following after you run "kubectl get all":
+```
+NAME                                             READY   STATUS              RESTARTS   AGE
+pod/redis-enterprise-operator-7f58bd467c-5jdqk   0/1     ContainerCreating   0          2s
+
+NAME                                        READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/redis-enterprise-operator   0/1     1            0           3s
+
+NAME                                                   DESIRED   CURRENT   READY   AGE
+replicaset.apps/redis-enterprise-operator-7f58bd467c   1         1         0       3s
+```
+```
 kubectl apply -f rec/rec-us-west1-a.yaml
 ```
 Install Ingress Controller (Nginx) in "ingress-nginx" namespace of the GKE cluster in us-west1-a region:

@@ -306,7 +306,7 @@ Once you are inside the container:
 rladmin status
 ```
 You should see the database metadata like the following:
-[rladmin status](./img/rladmin_status.png)
+![rladmin status](./img/rladmin_status.png)
 
 
 

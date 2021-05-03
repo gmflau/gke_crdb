@@ -129,6 +129,64 @@ Here is an example when creating a CRDB with database name <i>test-db</i>:
 
 
 
+Create the JSON Payload
+
+Create the JSON payload for CRDB creation request as in this <a href="./crdb.json" target="_blank">example</a> using the required parameters. Save the file as `crdb.json` in your current working directory.
+```
+{
+  "default_db_config": {
+    "name": "<db_name>",
+    "replication": false,
+    "memory_size": 10240000,
+    "aof_policy": "appendfsync-every-sec",
+    "shards_count": 1
+  },
+  "instances": [
+    {
+      "cluster": {
+        "url": "<site_a_api_endpoint>",
+        "credentials": {
+          "username": "<site_a_username>",
+          "password": "<site_a_password>"
+        },
+        "name": "<site_a_rec_name/fqdn>",
+        "replication_endpoint": "<site_a_replication_endpoint>443",
+        "replication_tls_sni": "<site_a_replication_endpoint>"
+      }
+    },
+    {
+      "cluster": {
+        "url": "<site_b_api_endpoint>",
+        "credentials": {
+          "username": "<site_b_username>",
+          "password": "<site_b_password>"
+        },
+        "name": "<site_b_rec_name/fqdn>",
+        "replication_endpoint": "<site_b_replication_endpoint>:443",
+        "replication_tls_sni": "<site_b_replication_endpoint>"
+      }
+    }
+  ],
+  "name": "<db_name>",
+  "encryption": true,
+  "compression": 0
+}
+```
+
+
+
+
+**END**
+
+
+
+
+
+
+
+
+
+
 
 
 

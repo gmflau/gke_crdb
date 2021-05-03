@@ -1,0 +1,38 @@
+{
+  "default_db_config": {
+    "name": "glau-crdb",
+    "replication": false,
+    "memory_size": 10240000,
+    "aof_policy": "appendfsync-every-sec",
+    "shards_count": 1
+  },
+  "instances": [
+    {
+      "cluster": {
+        "url": "https://api-raas-site-a.rec-a.35.247.99.119.nip.io",
+        "credentials": {
+          "username": "demo@redislabs.com",
+          "password": "Wp3YrQSE"
+        },
+        "name": "rec-a.raas-site-a.svc.cluster.local",
+        "replication_endpoint": "glau-crdb-raas-site-a.rec-a.35.247.99.119.nip.io:443",
+        "replication_tls_sni": "glau-crdb-raas-site-a.rec-a.35.247.99.119.nip.io"
+      }
+    },
+    {
+      "cluster": {
+        "url": "https://api-raas-site-b.rec-b.35.247.99.119.nip.io",
+        "credentials": {
+          "username": "demo@redislabs.com",
+          "password": "VniYXxS7"
+        },
+        "name": "rec-b.raas-site-b.svc.cluster.local",
+        "replication_endpoint": "glau-crdb-raas-site-b.rec-b.35.247.99.119.nip.io:443",
+        "replication_tls_sni": "glau-crdb-raas-site-b.rec-b.35.247.99.119.nip.io"
+      }
+    }
+  ],
+  "name": "glau-crdb",
+  "encryption": true,
+  "compression": 0
+}

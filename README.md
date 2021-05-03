@@ -11,7 +11,7 @@ The following is the high level workflow which you will follow:
 7. POST the JSON payload *to one* of the REC's API endpoints. (Yes, just one; it will coordinate with the other(s).)
 8. Run a workload.
 
-Build two GKE clusters:
+### 1. Build two GKE clusters:
 ```
 ./create_cluster.sh glau-aa-us-west1-a us-west1-a
 ./create_cluster.sh glau-aa-us-east1-b us-east1-b

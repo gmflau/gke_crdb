@@ -220,10 +220,10 @@ Here is an example when creating a CRDB with database name <i>test-db</i>:
 | Parameter Name in REST API | Example value |
 | -------------------------- | ------------- |
 | `name` | rec-us-west1-a.raas-us-west1-a.svc.cluster.local |
-| `url` | `https://api-raas-us-west1-a.rec-us-west1-a.35.185.198.166.nip.io` |
+| `url` | `https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io` |
 | `credentials` | username: `demo@redislabs.com`, password: `something` |
-| `replication_endpoint` | <i>glau-crdb</i><span style="color:orange">-raas-us-west1-a.rec-us-west1-a.35.185.198.166.nip.io</span>:443 |
-| `replication_tls_sni` | <i>glau-crdb</i><span style="color:orange">-raas-us-west1-a.rec-us-west1-a.35.185.198.166.nip.io</span> |
+| `replication_endpoint` | <i>glau-crdb</i><span style="color:orange">-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io</span>:443 |
+| `replication_tls_sni` | <i>glau-crdb</i><span style="color:orange">-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io</span> |
 
 
 

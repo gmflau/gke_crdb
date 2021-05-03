@@ -129,7 +129,6 @@ Here is an example when creating a CRDB with database name <i>test-db</i>:
 
 
 
-Create the JSON Payload
 
 Create the JSON payload for CRDB creation request as in this <a href="./crdb.json" target="_blank">example</a> using the required parameters. Save the file as `crdb.json` in your current working directory.
 ```

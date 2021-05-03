@@ -139,8 +139,7 @@ rec-us-west1-a   <none>   api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io 
 This indicates that a route has been created to access the API endpoint externally.
 Grab creds for rec:
 ```
-kubectl get secrets -n raas-us-west1-a rec-us-west1-a  -o json | jq '.data | {username}[] | @base64d'
-kubectl get secrets -n raas-us-west1-a rec-us-west1-a  -o json | jq '.data | {password}[] | @base64d'
+kubectl get secrets -n raas-us-west1-a rec-us-west1-a  -o json | jq '.data | {username}[],{password}[] | @base64d'
 ```
 Query the cluster through the API endpoint:
 ```
@@ -196,8 +195,7 @@ kubectl get ingress -n raas-us-east1-b
 ```
 Grab creds for rec:
 ```
-kubectl get secrets -n raas-us-east1-b rec-us-east1-b  -o json | jq '.data | {username}[] | @base64d'
-kubectl get secrets -n raas-us-east1-b rec-us-east1-b  -o json | jq '.data | {password}[] | @base64d'
+kubectl get secrets -n raas-us-east1-b rec-us-east1-b  -o json | jq '.data | {username}[],{password}[] | @base64d'
 ```
 Query the cluster thru the API endpoint:
 ```
@@ -212,7 +210,7 @@ The following parameters will be required to form the JSON payload to create the
 | --------- | ---  |  --- | --- |
 | <a href="name"></a>Cluster FQDN | `name`  | This is the name of the REC from the REC perspective  | `curl -u <user>:<password> https://<rec_api>/v1/cluster \| jq .name` |
 | <a href="url"></a>API URL | `url`  | This is the route the API endpoint as specified in `apiIngressURL`. Should be prefixed with `https://` | `kubectl get rec -o json -n <namespace> \| jq '.items[].spec.activeActive.apiIngressUrl'` |
-| Cluster Admin Username/password | `credentials` | Cluster Admin role username/password | `kubectl get secrets -n <namespace> <cluster_name> -o json \| jq '.data \| {password}[] \| @base64d' <br> kubectl get secrets -n <namespace> <cluster_name> -o json \| jq '.data \| {password}[] \| @base64d'` |
+| Cluster Admin Username/password | `credentials` | Cluster Admin role username/password | `kubectl get secrets -n <namespace> <cluster_name> -o json \| jq '.data \| {username}[],{password}[] \| @base64d'` |
 | Replication Endpoint | `replication_endpoint`  | This will be <`your_db_name`><`dbIngressSuffix`>:443 where `dbIngressSuffix` is specified in your `activeActive` spec | `kubectl get rec -o json -n <namespace> \| jq '.items[].spec.activeActive.dbIngressSuffix'` |
 | Replication TLS SNI | `replication_tls_sni` | This is the same as your `replication_endpoint`, but no port number required. | As above.
 

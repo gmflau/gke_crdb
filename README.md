@@ -3,20 +3,19 @@
 ## High Level Workflow
 The following is the high level workflow which you will follow:
 1. Create two GKE clusters
-2. Create Redis Enterprise Cluster in each GKE cluster
-3. Install Nginx ingress controller in each GKE cluster 
-4. Document the required parameters.
-5. Apply the `activeActive` spec to both clusters.
-6. Formulate the CRDB creation JSON payload using the parameters *from both RECs* in a single JSON document.
-7. POST the JSON payload *to one* of the REC's API endpoints. (Yes, just one; it will coordinate with the other(s).)
-8. Run a workload.
+2. Create Redis Enterprise Cluster / Install Nginx ingress controller / Apply the `activeActive` spec on each GKE cluster
+3. Document the required parameters
+4. Formulate the CRDB creation JSON payload using the parameters *from both RECs* in a single JSON document
+5. POST the JSON payload *to one* of the REC's API endpoints. (Yes, just one; it will coordinate with the other(s).)
+6. Run a workload
 
-### 1. Build two GKE clusters:
+#### 1. Build two GKE clusters:
 ```
 ./create_cluster.sh glau-aa-us-west1-a us-west1-a
 ./create_cluster.sh glau-aa-us-east1-b us-east1-b
 ```
 
+#### 2. Create Redis Enterprise Cluster / Install Nginx ingress controller in each GKE cluster
 Deploy REC in "raas-us-west1-a" namespace of the GKE cluster in us-west1-a region:
 ```
 ./bundle.sh raas-us-west1-a
@@ -105,8 +104,8 @@ curl -k -u <username>:<password> https://api-raas-us-east1-b.rec-us-east1-b.<EXT
 Ex: curl -k -u demo@redislabs.com:rglodSKY https://api-raas-us-east1-b.rec-us-east1-b.35.185.198.166.nip.io/v1/cluster
 ```
 
-
-## Required Parameters
+#### 3. Document the required parameters
+**Required Parameters**
 The following parameters will be required to form the JSON payload to create the CRDB.
 | Parameter | Parameter Name in REST API | Description | How to get it? |
 | --------- | ---  |  --- | --- |

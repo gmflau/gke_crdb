@@ -1,12 +1,21 @@
 # How to Create an Active-active Database (CRDB) in Redis Enterprise for Google Kubernetes Engine (GKE)
 
+## High Level Workflow
+The following is the high level workflow which you will follow:
+1. Create two GKE clusters
+2. Create Redis Enterprise Cluster in each GKE cluster
+3. Install Nginx ingress controller in each GKE cluster 
+4. Document the required parameters.
+5. Apply the `activeActive` spec to both clusters.
+6. Formulate the CRDB creation JSON payload using the parameters *from both RECs* in a single JSON document.
+7. POST the JSON payload *to one* of the REC's API endpoints. (Yes, just one; it will coordinate with the other(s).)
+8. Run a workload.
 
 Build two GKE clusters:
 ```
 ./create_cluster.sh glau-aa-us-west1-a us-west1-a
 ./create_cluster.sh glau-aa-us-east1-b us-east1-b
 ```
-
 
 Deploy REC in "raas-us-west1-a" namespace of the GKE cluster in us-west1-a region:
 ```
@@ -48,7 +57,7 @@ kubectl get secrets -n raas-us-west1-a rec-us-west1-a  -o json | jq '.data | {pa
 Query the cluster thru the API endpoint:
 ```
 curl -k -u <username>:<password> https://api-raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.nip.io/v1/cluster
-Ex: curl -k -u demo@redislabs.com:rglodSKY https://api-raas-us-west1-a.rec-us-west1-a.35.185.198.166.nip.io/v1/cluster
+Ex. curl -k -u demo@redislabs.com:rglodSKY https://api-raas-us-west1-a.rec-us-west1-a.35.185.198.166.nip.io/v1/cluster
 ```
 
 
@@ -96,6 +105,27 @@ curl -k -u <username>:<password> https://api-raas-us-east1-b.rec-us-east1-b.<EXT
 Ex: curl -k -u demo@redislabs.com:rglodSKY https://api-raas-us-east1-b.rec-us-east1-b.35.185.198.166.nip.io/v1/cluster
 ```
 
+
+## Required Parameters
+The following parameters will be required to form the JSON payload to create the CRDB.
+| Parameter | Parameter Name in REST API | Description | How to get it? |
+| --------- | ---  |  --- | --- |
+| <a href="name"></a>Cluster FQDN | `name`  | This is the name of the REC from the REC perspective  | `curl -u <user>:<password> https://<rec_api>/v1/cluster \| jq .name` |
+| <a href="url"></a>API URL | `url`  | This is the route the API endpoint as specified in `apiIngressURL`. Should be prefixed with `https://` | `oc get rec -o json \| jq '.items[].spec.activeActive.apiIngressUrl'` |
+| Cluster Admin Username/password | `credentials` | Cluster Admin role username/password | `get secret <cluster_name>  --template={{.data.password}} \| base64 -D`
+| Replication Endpoint | `replication_endpoint`  | This will be <`your_db_name`><`dbIngressSuffix`>:443 where `dbIngressSuffix` is specified in your `activeActive` spec | `oc get rec -o json \| jq '.items[].spec.activeActive.dbIngressSuffix'` |
+| Replication TLS SNI | `replication_tls_sni` | This is the same as your `replication_endpoint`, but no port number required. | As above.
+
+
+
+Here is an example when creating a CRDB with database name <i>test-db</i>:
+| Parameter Name in REST API | Example value |
+| -------------------------- | ------------- |
+| `name` | rec-us-west1-a.raas-us-west1-a.svc.cluster.local |
+| `url` | `https://api-raas-us-west1-a.rec-us-west1-a.35.185.198.166.nip.io` |
+| `credentials` | username: `demo@redislabs.com`, password: `something` |
+| `replication_endpoint` | <i>glau-crdb</i><span style="color:orange">-raas-us-west1-a.rec-us-west1-a.35.185.198.166.nip.io</span>:443 |
+| `replication_tls_sni` | <i>glau-crdb</i><span style="color:orange">-raas-us-west1-a.rec-us-west1-a.35.185.198.166.nip.io</span> |
 
 
 

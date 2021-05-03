@@ -299,7 +299,7 @@ $ curl -k -u demo@redislabs.com:NeEkHiq1 https://api-raas-us-west1-a.rec-us-west
 }
 ```
 
-Verify if the CRDB is created:
+Verify if a CRDB instance is created on the Redis Enterprise Cluster (rec-us-west1-a):
 ```
 kubectl exec -it rec-us-west1-a-0 -n raas-us-west1-a -c redis-enterprise-node -- /bin/bash
 Once you are inside the container:
@@ -308,7 +308,13 @@ rladmin status
 You should see the database metadata like the following:
 ![rladmin status](./img/rladmin_status.png)
 
-
+Verify if the corresponding CRDB instance is created on the Redis Enterprise Cluster (rec-us-east1-b):
+```
+kubectl exec -it rec-us-east1-b-0 -n raas-us-east1-b -c redis-enterprise-node -- /bin/bash
+Once you are inside the container:
+rladmin status
+``` 
+![rladmin status 2](./img/rladmin_status_02.png)
 
 #### 6. Run a workload
 

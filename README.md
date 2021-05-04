@@ -317,7 +317,7 @@ rladmin status
 
 
 
-Appendix A - Retrieving connection parameters for the two CRDB instances:
+#### Appendix A - Retrieving connection parameters for the two CRDB instances:
 Grab the database endpoints for the CRDB instances:
 ```
 curl -k -u demo@redislabs.com:<some password> https://api-raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.nip.io/v1/bdbs | jq '.[0].endpoints[0].dns_name'
@@ -336,7 +336,7 @@ kubectl exec -it rec-us-east1-b-0 -n raas-us-east1-b -c redis-enterprise-node --
 redis-cli -h <database endpoint> -p <database port>
 ```
 
-Appendix B - Accessing REC CM UI:
+#### Appendix B - Accessing REC CM UI:
 For the cluster in us-west1-a region:
 Update <a href="./rec/ingress-us-west1-a-web-ui.yaml" target="_blank">ingress-us-west1-a-web-ui.yaml</a> for your deployment
 Then access the CM UI using the following URL along with the credentials for the REC in us-west1-a region::
@@ -345,7 +345,7 @@ https://web-ui-raas-us-east1-b.rec-us-east1-b.<EXTERNAL-IP>.nip.io
 ```
 
 
-## Troubleshooting Steps
+#### Troubleshooting Steps
 
 1. Symptom: API endpoint not reachable
 The API endpoint is not reachable from one cluster to the other. 

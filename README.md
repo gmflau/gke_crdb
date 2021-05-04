@@ -321,6 +321,7 @@ Try to connect to the database from one of the Redis Enterprise Cluster node:
 Grab the database endpoint:
 ```
 curl -k -u demo@redislabs.com:NeEkHiq1 https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/bdbs | jq '.[0].endpoints[0].dns_name'
+curl -k -u demo@redislabs.com:wC0EU6B0 https://api-raas-us-east1-b.rec-us-east1-b.34.75.99.216.nip.io/v1/bdbs | jq '.[0].endpoints[0].dns_name'
 ```
 Grab the database port:
 ```
@@ -330,10 +331,16 @@ Connect to the database:
 ```
 kubectl exec -it rec-us-west1-a-0 -n raas-us-west1-a -c redis-enterprise-node -- /bin/bash
 redis-cli -h <database endpoint> -p <database port>
+kubectl exec -it rec-us-east1-b-0 -n raas-us-east1-b -c redis-enterprise-node -- /bin/bash
+redis-cli -h <database endpoint> -p <database port>
 ```
 
+Connect to REC CM:
+```
+https://web-ui-raas-us-east1-b.rec-us-east1-b.34.75.99.216.nip.io
 
-
+https://web-ui-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/
+```
 
 
 

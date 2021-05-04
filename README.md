@@ -7,7 +7,6 @@ The following is the high level workflow which you will follow:
 3. Document the required parameters
 4. Formulate the CRDB creation JSON payload using the parameters *from both RECs* in a single JSON document
 5. POST the JSON payload *to one* of the REC's API endpoints. (Yes, just one; it will coordinate with the other(s).)
-6. Run a workload
 
 #### 1. Build two GKE clusters:
 ```
@@ -144,7 +143,7 @@ kubectl get secrets -n raas-us-west1-a rec-us-west1-a  -o json | jq '.data | {us
 Query the cluster through the API endpoint:
 ```
 curl -k -u <username>:<password> https://api-raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.nip.io/v1/cluster
-Ex. curl -k -u demo@redislabs.com:NeEkHiq1 https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/cluster
+Ex. curl -k -u demo@redislabs.com:<some password> https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/cluster
 ```
 At this point, the Redis Enterprise Cluster named rec-us-west1-a is set up for Active-Active Geo Replication.
 
@@ -200,7 +199,7 @@ kubectl get secrets -n raas-us-east1-b rec-us-east1-b  -o json | jq '.data | {us
 Query the cluster thru the API endpoint:
 ```
 curl -k -u <username>:<password> https://api-raas-us-east1-b.rec-us-east1-b.<EXTERNAL-IP>.nip.io/v1/cluster
-Ex. curl -k -u demo@redislabs.com:wC0EU6B0 https://api-raas-us-east1-b.rec-us-east1-b.34.75.99.216.nip.io/v1/cluster
+Ex. curl -k -u demo@redislabs.com:<some password> https://api-raas-us-east1-b.rec-us-east1-b.34.75.99.216.nip.io/v1/cluster
 ```
 
 #### 3. Document the required parameters
@@ -247,7 +246,7 @@ Create the JSON payload for CRDB creation request as in this <a href="./crdb.jso
           "password": "<site_a_password>"
         },
         "name": "<site_a_rec_name/fqdn>",
-        "replication_endpoint": "<site_a_replication_endpoint>443",
+        "replication_endpoint": "<site_a_replication_endpoint>:443",
         "replication_tls_sni": "<site_a_replication_endpoint>"
       }
     },
@@ -275,7 +274,7 @@ In this step you will make the Active-Active DB request to just one cluster memb
 
 Apply the following to the API endpoint at *just one* cluster API endpoint:
 
-`curl -k -u demo@redislabs.com:NeEkHiq1 https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/crdbs -X POST -H 'Content-Type: application/json' -d @crdb.json`
+`curl -k -u demo@redislabs.com:<some password> https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/crdbs -X POST -H 'Content-Type: application/json' -d @crdb.json`
 
 *Note:* `curl` some users are having difficulty specifying the payload with the `-d` argument. Please consult your curl manual or try postman.
 
@@ -291,7 +290,7 @@ You should see a reply from the API as in the following which indicates the payl
 <a href="crdb_tasks"></a>
 You can get the status of the above task by issuing a GET on `/v1/crdbs_tasks/<id>`. Here is an example of a successful task:
 ```
-$ curl -k -u demo@redislabs.com:NeEkHiq1 https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/crdb_tasks/9644de6c-1bef-4ebe-b010-3a4e6199138b
+$ curl -k -u demo@redislabs.com:<some password> https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/crdb_tasks/9644de6c-1bef-4ebe-b010-3a4e6199138b
 {
   "crdb_guid": "805be1c6-0b27-47b1-8461-00b8465981c9",
   "id": "9644de6c-1bef-4ebe-b010-3a4e6199138b",
@@ -317,15 +316,17 @@ rladmin status
 ![rladmin status 2](./img/rladmin_status_02.png)
 
 
-Try to connect to the database from one of the Redis Enterprise Cluster node:
-Grab the database endpoint:
+
+Appendix A - Retrieving connection parameters for the two CRDB instances:
+Grab the database endpoints for the CRDB instances:
 ```
-curl -k -u demo@redislabs.com:NeEkHiq1 https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/bdbs | jq '.[0].endpoints[0].dns_name'
-curl -k -u demo@redislabs.com:wC0EU6B0 https://api-raas-us-east1-b.rec-us-east1-b.34.75.99.216.nip.io/v1/bdbs | jq '.[0].endpoints[0].dns_name'
+curl -k -u demo@redislabs.com:<some password> https://api-raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.nip.io/v1/bdbs | jq '.[0].endpoints[0].dns_name'
+curl -k -u demo@redislabs.com:<some password> https://api-raas-us-east1-b.rec-us-east1-b.<EXTERNAL-IP>.nip.io/v1/bdbs | jq '.[0].endpoints[0].dns_name'
 ```
 Grab the database port:
 ```
-curl -k -u demo@redislabs.com:NeEkHiq1 https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/v1/bdbs | jq '.[0].endpoints[0].port'
+curl -k -u demo@redislabs.com:<some password> https://api-raas-us-west1-a.rec-us-west1-a.<EXTERNAL-IP>.1.nip.io/v1/bdbs | jq '.[0].endpoints[0].port'
+curl -k -u demo@redislabs.com:<some password> https://api-raas-us-east1-b.rec-us-east1-b.<EXTERNAL-IP>.1.nip.io/v1/bdbs | jq '.[0].endpoints[0].port'
 ```
 Connect to the database:
 ```
@@ -335,65 +336,13 @@ kubectl exec -it rec-us-east1-b-0 -n raas-us-east1-b -c redis-enterprise-node --
 redis-cli -h <database endpoint> -p <database port>
 ```
 
-Connect to REC CM:
+Appendix B - Accessing REC CM UI:
+For the cluster in us-west1-a region:
+Update <a href="./rec/ingress-us-west1-a-web-ui.yaml" target="_blank">ingress-us-west1-a-web-ui.yaml</a> for your deployment
+Then access the CM UI using the following URL along with the credentials for the REC in us-west1-a region::
 ```
-https://web-ui-raas-us-east1-b.rec-us-east1-b.34.75.99.216.nip.io
-
-https://web-ui-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io/
+https://web-ui-raas-us-east1-b.rec-us-east1-b.<EXTERNAL-IP>.nip.io
 ```
-
-
-
-#### 6. Run a workload
-
-<a href="workload"></a>
-It's time to test your deployment. You can use the redis benchmarking tool `memtier_benchmark` <a href="https://github.com/RedisLabs/memtier_benchmark" _target="blank">[link]</a>. Here are a couple of examples deployment manifests: 
-
-1. <a href="./benchmark.yaml" _target="blank">Benchmark without TLS</a>.
-2. <a href="./benchmark-tls.yaml" _target="blank">Benchmark with TLS</a>, required when working through Openshift Routes.
-
-Below is an example invocation of `memtier_benchmark` as from the commandline which is as-is reflected in the manifest file linked above: <a href="./benchmark-tls.yaml" _target="blank">Benchmark with TLS</a>. This invocation should yield somewhere between 3k and 10k requests per second. If you want to generate more workload, adjust the `Limits` and `requests` values in this manifest: `memtier_benchmark` will consume as much resources as are given to it. 
-```
-memtier_benchmark -a YkBybC5jb20= -s db-raas-site-a.apps.bbokdoct.redisdemo.com -p 443 --tls --tls-skip-verify --sni db-raas-site-a.apps.bbokdoct.redisdemo.com --ratio=1:3 --data-size-pattern=R --data-size-range=128-2800 --requests=20000000 --pipeline=1 --clients=4 --threads=5 --run-count=3
-```
-What do the arguments above mean?
-* `-a <password>`, `-s <server>`, `-p <port>`: use Redis basic [`Auth`](https://redis.io/commands/auth) (without a specified user) to connect to a Redis `server` on a specified `port`.
-* `--tls --tls-skip-verify`: Use TLS but to not verify server identity. If you've installed your own server certs or installed our CA then `--tls-skip-verify` is likely unnecessary.
-* Other options are fairly straight forward: 
-  * Use a `1:3` W:R ratio 
-  * Randomize the data size between `128` and `2800` Bytes
-  * Execute `20M` commands with only one command per requests (`--pipeline=1`)
-  * Create `4` clients with `5` working threads each
-  * Do all the above 3 times.  
-
-To apply the benchmark workload: 
-1. Edit the arguments in the file. 
-   * You can specify values directly with `env: {name, value}` pairs:
-      ```
-      env:
-        - name: REDIS_PORT
-          value: "443"
-      ```
-   * You can also get the values from K8s Secrets as in the following: 
-      ```
-      - name: REDIS_PASSWORD
-        valueFrom:
-            secretKeyRef:
-              key: password
-              name: redb-redis-db1 
-      ```
-2. Apply the manifest: `oc apply -f benchmark-tls.yaml`. If the arguments are properly specified then you will see a deployment and pod created for this workload. 
-
-```
-$ oc get all
-NAME                                             READY   STATUS    RESTARTS   AGE
-pod/redis-benchmark-tls-fd5df8549-wm4xs          1/1     Running   0          8m9s
-
-NAME                                        READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/redis-benchmark-tls         1/1     1            1           88m
-```
-
-Alas, this is not a `memtier_benchmark` tutorial. Feel free to try out some of the other command line options. 
 
 
 ## Troubleshooting Steps

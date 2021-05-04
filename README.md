@@ -405,11 +405,11 @@ The API endpoint is not reachable from one cluster to the other.
   
       ```
       kubectl exec  -it  rec-us-west1-a-0 -c redis-enterprise-node -n raas-us-west1-a -- /bin/bash
-      $ curl -ivk https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io
+      $ curl -ivk https://api-raas-us-east1-b.rec-us-east1-b.34.75.99.216.nip.io
       ...
       HTTP/1.1 401 UNAUTHORIZED
       ...
-      WWW-Authenticate: ... realm="rec-us-west1-a.raas-us-west1-a.svc.cluster.local"
+      WWW-Authenticate: ... realm="rec-us-east1-b.raas-us-east1-b.svc.cluster.local"
       ```
       It is expected that you will get a "401" response but check that the returned "realm" reflects the remote cluster's FQDN as in [Required Parameters: `name`](#name).
 

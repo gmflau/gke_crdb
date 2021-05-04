@@ -330,7 +330,6 @@ Connect to the database:
 ```
 kubectl exec -it rec-us-west1-a-0 -n raas-us-west1-a -c redis-enterprise-node -- /bin/bash
 redis-cli -h <database endpoint> -p <database port>
-
 ```
 
 
@@ -398,12 +397,12 @@ The API endpoint is not reachable from one cluster to the other.
     * Open a shell side a one of the Redis Enterprise cluster pods:
   
       ```
-      oc exec -it rec-a-0 -- /bin/bash
-      $ curl -ivk https://api-raas-site-b.apps.bbokdoct.redisdemo.com
+      kubectl exec  -it  rec-us-west1-a-0 -c redis-enterprise-node -n raas-us-west1-a -- /bin/bash
+      $ curl -ivk https://api-raas-us-west1-a.rec-us-west1-a.34.105.40.1.nip.io
       ...
       HTTP/1.1 401 UNAUTHORIZED
       ...
-      WWW-Authenticate: ... realm="rec-b.raas-site-b.svc.cluster.local"
+      WWW-Authenticate: ... realm="rec-us-west1-a.raas-us-west1-a.svc.cluster.local"
       ```
       It is expected that you will get a "401" response but check that the returned "realm" reflects the remote cluster's FQDN as in [Required Parameters: `name`](#name).
 
@@ -422,6 +421,6 @@ The API endpoint is not reachable from one cluster to the other.
     ```
     * Your payload is not being passed to the API or the payload is not valid JSON. Please Lint your JSON or try Postman with built-in JSON validate.
 
-1. The Active-Active DB request was accepted and completed, but replication is not taking place. This is likely the case if either or both DB ingress routes are not working properly. Please contact your K8s/OpenShift administrator to validate these routes.
+1. The Active-Active DB request was accepted and completed, but replication is not taking place. This is likely the case if either or both DB ingress routes are not working properly.
 
 

@@ -407,7 +407,7 @@ The API endpoint is not reachable from one cluster to the other.
       It is expected that you will get a "401" response but check that the returned "realm" reflects the remote cluster's FQDN as in [Required Parameters: `name`](#name).
 
     * Perform the same step as above from the other site, to the former. 
-    * If one or both of these steps above do not result in "401" with the appropriate "realm" then the contact your Openshift administrator for help troubleshooting an Openshift Route to the [REC API endpoint](#url). 
+    * If one or both of these steps above do not result in "401" with the appropriate "realm" then investigate your Nginx ingress controller setup related to the [REC API endpoint](#url). 
   
 
 1. API response 400, bad request:

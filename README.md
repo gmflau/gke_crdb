@@ -1,4 +1,4 @@
-# How to Create an Active-active Database (CRDB) in Redis Enterprise for Google Kubernetes Engine (GKE)
+# How to Create an Active-Active Database (CRDB) in Redis Enterprise for Google Kubernetes Engine (GKE)
 
 ## High Level Workflow
 The following is the high level workflow which you will follow:

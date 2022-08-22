@@ -19,6 +19,10 @@ Deploy REC in "raas-us-west1-a" namespace of the GKE cluster in us-west1-a regio
 ```
 ./bundle.sh raas-us-west1-a
 ```
+```
+VERSION=`curl --silent https://api.github.com/repos/RedisLabs/redis-enterprise-k8s-docs/releases/latest | grep tag_name | awk -F'"' '{print $4}'`
+kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/$VERSION/bundle.yaml
+```
 You should see the following after you run "kubectl get all":
 ```
 NAME                                             READY   STATUS              RESTARTS   AGE
@@ -151,6 +155,8 @@ At this point, the Redis Enterprise Cluster named rec-us-west1-a is set up for A
 Now, deploy REC in "raas-us-east1-b" namespace of the GKE cluster in us-east1-b region:
 ```
 ./bundle.sh raas-us-east1-b
+VERSION=`curl --silent https://api.github.com/repos/RedisLabs/redis-enterprise-k8s-docs/releases/latest | grep tag_name | awk -F'"' '{print $4}'`
+kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/$VERSION/bundle.yaml
 kubectl apply -f rec/rec-us-east1-b.yaml
 ```
 Install Ingress Controller (Nginx) in "ingress-nginx" namespace of the GKE cluster in us-east1-b region:
